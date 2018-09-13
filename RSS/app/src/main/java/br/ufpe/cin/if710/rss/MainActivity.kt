@@ -2,7 +2,9 @@ package br.ufpe.cin.if710.rss
 
 import android.app.Activity
 import android.os.Bundle
-import android.widget.TextView
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -23,13 +25,12 @@ class MainActivity : Activity() {
     //http://pox.globo.com/rss/g1/ciencia-e-saude/
     //http://pox.globo.com/rss/g1/tecnologia/
 
-    //use ListView ao invés de TextView - deixe o atributo com o mesmo nome
-    private var conteudoRSS: TextView? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        conteudoRSS = findViewById(R.id.conteudoRSS)
+
+        conteudoRSS.layoutManager = LinearLayoutManager(this)
+
     }
 
     override fun onStart() {
@@ -37,7 +38,10 @@ class MainActivity : Activity() {
         try {
             //https://antonioleiva.com/anko-background-kotlin-android/
             doAsync { val feedXML = ParserRSS.parse(getRssFeed(RSS_FEED))
-            uiThread { conteudoRSS?.text = feedXML.toString() }}
+            uiThread { conteudoRSS.adapter = RssAdapter(feedXML, this@MainActivity)
+                conteudoRSS.addItemDecoration(DividerItemDecoration(this@MainActivity, LinearLayoutManager.VERTICAL))
+
+            }}
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -61,7 +65,7 @@ class MainActivity : Activity() {
                 count = inputStream.read(buffer)
             }
             val response = out.toByteArray()
-            rssFeed = response.toString()
+            rssFeed = response.toString(charset("UTF-8"))
         } finally {
             inputStream?.close()
         }
