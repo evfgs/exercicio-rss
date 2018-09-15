@@ -17,7 +17,8 @@ import java.net.URL
 class MainActivity : Activity() {
 
     //ao fazer envio da resolucao, use este link no seu codigo!
-    private val RSS_FEED = "http://leopoldomt.com/if1001/g1brasil.xml"
+
+   // private val RSS_FEED = "http://leopoldomt.com/if1001/g1brasil.xml"
 
     //OUTROS LINKS PARA TESTAR...
     //http://rss.cnn.com/rss/edition.rss
@@ -28,7 +29,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        //Definindo o layoutManager do conteudoRSS
         conteudoRSS.layoutManager = LinearLayoutManager(this)
 
     }
@@ -36,8 +37,10 @@ class MainActivity : Activity() {
     override fun onStart() {
         super.onStart()
         try {
+            //Usando tarefa assincrona por meio de doAsync
             //https://antonioleiva.com/anko-background-kotlin-android/
-            doAsync { val feedXML = ParserRSS.parse(getRssFeed(RSS_FEED))
+            //Utilizando o RssAdapter e o Resource que está em strings.xml
+            doAsync { val feedXML = ParserRSS.parse(getRssFeed(getString(R.string.rssfeed)))
             uiThread { conteudoRSS.adapter = RssAdapter(feedXML, this@MainActivity)
                 conteudoRSS.addItemDecoration(DividerItemDecoration(this@MainActivity, LinearLayoutManager.VERTICAL))
 
@@ -49,6 +52,7 @@ class MainActivity : Activity() {
     }
 
     //Opcional - pesquise outros meios de obter arquivos da internet - bibliotecas, etc.
+    //Quando passou para Kotlin ocorreram alguns bugs que precisaram ser corrigidos
     @Throws(IOException::class)
     private fun getRssFeed(feed: String): String {
         var inputStream: InputStream? = null

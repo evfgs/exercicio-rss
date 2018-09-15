@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+        <!--adicionando o widget de RecyclerView-->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/conteudoRSS"
             android:layout_width="match_parent"
